@@ -17,15 +17,15 @@ export async function POST(req: NextRequest) {
       developerUserId,
     });
 
-    return NextResponse.json({ success: true, notifications });
+    // Ensure notifications is an array and not undefined/null
+    const safeNotifications = Array.isArray(notifications) ? notifications : [];
+
+    return NextResponse.json({ success: true, notifications: safeNotifications });
   } catch (error) {
     console.error("Error in POST /api/v1/get-notifications:", error);
 
-    const errorMessage =
-      error instanceof Error ? error.message : "An unknown error occurred";
-
     return NextResponse.json(
-      { success: false, error: errorMessage },
+      { success: false, error: error instanceof Error ? error.message : "An unknown error occurred" },
       { status: 500 }
     );
   }
