@@ -1,94 +1,96 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { io } from "socket.io-client"
-import { Bell, X, Clock, ExternalLink } from "lucide-react"
-import { Popover, PopoverTrigger, PopoverContent } from "./Popover"
-import { motion, AnimatePresence } from "framer-motion"
+import { useEffect, useState, useMemo } from "react";
+import { io } from "socket.io-client";
+import { Bell, X, Clock, ExternalLink } from "lucide-react";
+import { Popover, PopoverTrigger, PopoverContent } from "./Popover";
+import { motion, AnimatePresence } from "framer-motion";
 
 type NotificationPayload = {
-  content?: string
-  buttonText?: string
-  buttonUrl?: string
-  timestamp?: string
-}
+  content?: string;
+  buttonText?: string;
+  buttonUrl?: string;
+  timestamp?: string;
+};
 
 type NotificationFeedProps = {
-  userId: string
-  align?: "start" | "center" | "end"
-}
+  userId: string;
+  align?: "start" | "center" | "end";
+};
 
 export function NotificationFeed({ userId, align = "end" }: NotificationFeedProps) {
-  const [notifications, setNotifications] = useState<NotificationPayload[]>([])
-  const [isOpen, setIsOpen] = useState(false)
-  const socket = io("https://sendify-socket.onrender.com")
+  const [notifications, setNotifications] = useState<NotificationPayload[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // ✅ Memoizing socket instance to prevent unnecessary re-renders
+  const socket = useMemo(() => io("https://sendify-socket.onrender.com"), []);
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        console.log("🔹 Starting fetchNotifications...")
+        console.log("🔹 Starting fetchNotifications...");
 
-        const requestBody = { developerUserId: userId }
-        console.log("📤 Request Body:", requestBody)
+        const requestBody = { developerUserId: userId };
+        console.log("📤 Request Body:", requestBody);
 
         const response = await fetch("https://sendify.100xbuild.com/api/v1/get-notifications", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(requestBody),
-        })
+        });
 
-        console.log("📥 Response received:", response)
+        console.log("📥 Response received:", response);
 
         if (!response.ok) {
-          console.error("❌ Fetch failed with status:", response.status, response.statusText)
-          throw new Error(`Failed to fetch notifications: ${response.statusText}`)
+          console.error("❌ Fetch failed with status:", response.status, response.statusText);
+          throw new Error(`Failed to fetch notifications: ${response.statusText}`);
         }
 
-        const data = await response.json()
-        console.log("📄 Response JSON:", data)
+        const data = await response.json();
+        console.log("📄 Response JSON:", data);
 
         if (!data.success || !Array.isArray(data.notifications)) {
-          console.error("❌ Invalid API response format:", data)
-          throw new Error("Invalid API response format")
+          console.error("❌ Invalid API response format:", data);
+          throw new Error("Invalid API response format");
         }
 
         const enrichedData = data.notifications.map((item: NotificationPayload) => ({
           ...item,
           timestamp: item.timestamp || new Date().toISOString(),
-        }))
+        }));
 
-        console.log("✅ Final notifications array:", enrichedData)
-        setNotifications(enrichedData)
+        console.log("✅ Final notifications array:", enrichedData);
+        setNotifications(enrichedData);
       } catch (error) {
-        console.error("🚨 Error fetching notifications:", error)
+        console.error("🚨 Error fetching notifications:", error);
       }
-    }
+    };
 
-    fetchNotifications()
-    socket.emit("register", userId)
+    fetchNotifications();
+    socket.emit("register", userId);
 
     socket.on("new-notification", (data: NotificationPayload) => {
-      console.log("Received notification:", data)
+      console.log("Received notification:", data);
       const enhancedData = {
         ...data,
         timestamp: data.timestamp || new Date().toISOString(),
-      }
-      setNotifications((prev) => [enhancedData, ...prev])
-    })
+      };
+      setNotifications((prev) => [enhancedData, ...prev]);
+    });
 
     return () => {
-      socket.off("new-notification")
-    }
-  }, [userId])
+      socket.off("new-notification");
+    };
+  }, [userId, socket]); // ✅ Added `socket` to dependency array
 
   const clearNotifications = () => {
-    setNotifications([])
-  }
+    setNotifications([]);
+  };
 
   const formatTime = (timestamp: string) => {
-    const date = new Date(timestamp)
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-  }
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -128,7 +130,7 @@ export function NotificationFeed({ userId, align = "end" }: NotificationFeedProp
           )}
         </div>
 
-        {/* Notification List - Takes up remaining space */}
+        {/* Notification List */}
         <div className="flex-1 overflow-y-auto p-3 space-y-3">
           <AnimatePresence>
             {notifications.length === 0 ? (
@@ -181,20 +183,7 @@ export function NotificationFeed({ userId, align = "end" }: NotificationFeedProp
             )}
           </AnimatePresence>
         </div>
-
-        {/* Fixed Height Footer Banner */}
-        <div className="sticky bottom-0 z-10 h-10 flex items-center justify-center p-2.5 text-center text-gray-500 text-xs font-medium border-t border-gray-200">
-          Powered with{" "}
-          <a
-            href="https://sendify.100xbuild.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-bold underline text-blue-500 hover:text-blue-600 transition-colors duration-200 ml-1"
-          >
-            Sendify
-          </a>
-        </div>
       </PopoverContent>
     </Popover>
-  )
+  );
 }
