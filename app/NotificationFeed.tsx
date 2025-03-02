@@ -98,7 +98,7 @@ export function NotificationFeed({ userId, align = "end" }: NotificationFeedProp
                   <Bell className="w-8 h-8 text-blue-300" />
                 </div>
                 <p className="text-gray-700 font-medium">No notifications yet</p>
-                <p className="text-gray-500 text-sm mt-1">We'll notify you when something arrives</p>
+                <p className="text-gray-500 text-sm mt-1">We&apos;ll notify you when something arrives</p>
               </motion.div>
             ) : (
               notifications.map((item, index) => (
