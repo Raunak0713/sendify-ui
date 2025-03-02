@@ -1,13 +1,6 @@
 "use client";
 
-import { NotificationFeed } from "./NotificationFeed";
-
-// import { NotificationFeed } from "sendify";
-
-
-
-// import { NotificationFeed } from "sendify";
-
+import { NotificationFeed } from "sendify";
 
 export default function Home() {
   return (
