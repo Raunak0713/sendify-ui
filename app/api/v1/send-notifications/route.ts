@@ -1,12 +1,10 @@
 import { api } from "@/convex/_generated/api";
 import { fetchMutation } from "convex/nextjs";
 import { NextRequest, NextResponse } from "next/server";
-import { Sendify } from "sendify";
 
 export async function POST(req: NextRequest) {
   try {
     const { userIds, content, buttonText, buttonUrl } = await req.json();
-    const sendify = new Sendify("123");
 
     await fetchMutation(api.notification.createNotifications, {
       members: userIds,
@@ -15,9 +13,22 @@ export async function POST(req: NextRequest) {
       buttonUrl,
     });
 
-    await sendify.sendNotification(userIds, content, buttonText, buttonUrl);
 
-    return NextResponse.json({ success: true });
+    const response = await fetch("https://sendify-socket.onrender.com/send-notification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userIds, content, buttonText, buttonUrl }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to send notification");
+    }
+
+    const data = await response.json();
+
+    return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error("Error in POST /api/send-notification:", error);
 
