@@ -83,9 +83,24 @@ export function NotificationFeed({ userId, align = "end" }: NotificationFeedProp
     };
   }, [userId, socket]); // ✅ Added `socket` to dependency array
 
-  const clearNotifications = () => {
-    setNotifications([]);
-  };
+  const clearNotifications = async () => {
+    try {
+      const response = await fetch("https://sendify.100xbuild.com/api/v1/delete-notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ developerUserId: userId }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to delete notifications: ${response.statusText}`);
+      }
+  
+      console.log("✅ Notifications cleared successfully");
+      setNotifications([]);
+    } catch (error) {
+      console.error("🚨 Error clearing notifications:", error);
+    }
+  };  
 
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
