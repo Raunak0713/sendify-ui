@@ -24,11 +24,51 @@ export function NotificationFeed({ userId, align = "end" }: NotificationFeedProp
   const socket = io("https://sendify-socket.onrender.com")
 
   useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        console.log("🔹 Starting fetchNotifications...")
+
+        const requestBody = { developerUserId: userId }
+        console.log("📤 Request Body:", requestBody)
+
+        const response = await fetch("https://sendify.100xbuild.com/api/v1/get-notifications", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestBody),
+        })
+
+        console.log("📥 Response received:", response)
+
+        if (!response.ok) {
+          console.error("❌ Fetch failed with status:", response.status, response.statusText)
+          throw new Error(`Failed to fetch notifications: ${response.statusText}`)
+        }
+
+        const data = await response.json()
+        console.log("📄 Response JSON:", data)
+
+        if (!data.success || !Array.isArray(data.notifications)) {
+          console.error("❌ Invalid API response format:", data)
+          throw new Error("Invalid API response format")
+        }
+
+        const enrichedData = data.notifications.map((item: NotificationPayload) => ({
+          ...item,
+          timestamp: item.timestamp || new Date().toISOString(),
+        }))
+
+        console.log("✅ Final notifications array:", enrichedData)
+        setNotifications(enrichedData)
+      } catch (error) {
+        console.error("🚨 Error fetching notifications:", error)
+      }
+    }
+
+    fetchNotifications()
     socket.emit("register", userId)
 
     socket.on("new-notification", (data: NotificationPayload) => {
       console.log("Received notification:", data)
-      // Add current timestamp if not provided
       const enhancedData = {
         ...data,
         timestamp: data.timestamp || new Date().toISOString(),
@@ -39,7 +79,7 @@ export function NotificationFeed({ userId, align = "end" }: NotificationFeedProp
     return () => {
       socket.off("new-notification")
     }
-  }, [userId, socket]) // Added socket to dependencies
+  }, [userId])
 
   const clearNotifications = () => {
     setNotifications([])
@@ -69,10 +109,12 @@ export function NotificationFeed({ userId, align = "end" }: NotificationFeedProp
           </AnimatePresence>
         </div>
       </PopoverTrigger>
+
       <PopoverContent
         align={align}
-        className="mt-2 w-[420px] max-h-[420px] bg-gradient-to-b from-white to-gray-50 border border-gray-200 rounded-xl shadow-2xl overflow-hidden p-0"
+        className="mt-2 w-[420px] min-h-[420px] max-h-[420px] bg-gradient-to-b from-white to-gray-50 border border-gray-200 rounded-xl shadow-2xl overflow-hidden p-0 flex flex-col"
       >
+        {/* Header */}
         <div className="sticky top-0 z-10 backdrop-blur-md bg-white/90 border-b border-gray-200 p-4 flex justify-between items-center">
           <h3 className="text-gray-800 font-medium">Notifications</h3>
           {notifications.length > 0 && (
@@ -86,7 +128,8 @@ export function NotificationFeed({ userId, align = "end" }: NotificationFeedProp
           )}
         </div>
 
-        <div className="overflow-y-auto  max-h-[calc(350px-60px)]  p-3 space-y-3">
+        {/* Notification List - Takes up remaining space */}
+        <div className="flex-1 overflow-y-auto p-3 space-y-3">
           <AnimatePresence>
             {notifications.length === 0 ? (
               <motion.div
@@ -98,7 +141,7 @@ export function NotificationFeed({ userId, align = "end" }: NotificationFeedProp
                   <Bell className="w-8 h-8 text-blue-300" />
                 </div>
                 <p className="text-gray-700 font-medium">No notifications yet</p>
-                <p className="text-gray-500 text-sm mt-1">We&apos;ll notify you when something arrives</p>
+                <p className="text-gray-500 text-sm mt-1">We'll notify you when something arrives</p>
               </motion.div>
             ) : (
               notifications.map((item, index) => (
@@ -120,9 +163,8 @@ export function NotificationFeed({ userId, align = "end" }: NotificationFeedProp
                           <span>{item.timestamp ? formatTime(item.timestamp) : "Just now"}</span>
                         </div>
                       </div>
-
                       {item.buttonText && item.buttonUrl && (
-                        <div className="">
+                        <div>
                           <a
                             href={item.buttonUrl}
                             className="inline-flex items-center gap-1.5 text-xs font-medium bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-400 hover:to-cyan-300 text-white px-3 py-1.5 rounded-md transition-all duration-300 shadow-md hover:shadow-blue-200"
@@ -140,14 +182,14 @@ export function NotificationFeed({ userId, align = "end" }: NotificationFeedProp
           </AnimatePresence>
         </div>
 
-        {/* Persistent banner at the bottom */}
-        <div className="sticky bottom-0 z-10  p-2.5 text-center text-gray-500 text-xs font-medium border-t border-gray-200">
-          Made with{" "}
+        {/* Fixed Height Footer Banner */}
+        <div className="sticky bottom-0 z-10 h-10 flex items-center justify-center p-2.5 text-center text-gray-500 text-xs font-medium border-t border-gray-200">
+          Powered with{" "}
           <a
             href="https://sendify.100xbuild.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-bold underline text-blue-500 hover:text-blue-600 transition-colors duration-200"
+            className="font-bold underline text-blue-500 hover:text-blue-600 transition-colors duration-200 ml-1"
           >
             Sendify
           </a>
@@ -156,4 +198,3 @@ export function NotificationFeed({ userId, align = "end" }: NotificationFeedProp
     </Popover>
   )
 }
-

@@ -1,11 +1,12 @@
 "use client";
 
-import { NotificationFeed, Sendify } from "sendify";
+import { sendify } from "@/lib/sendify";
+import { NotificationFeed } from "./NotificationFeed";
+// import { NotificationFeed } from "sendify";
 
 export default function Home() {
   const handleSend = () => {
-    const sendify = new Sendify("12")
-    sendify.sendNotification(["meow"],"meow content", "meow text", "meow url")
+    sendify.sendNotification(["meow"],"meow content live live live live live", "meow text text", "meow url")
   }
 
   return (
