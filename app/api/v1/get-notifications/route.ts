@@ -7,26 +7,14 @@ export async function POST(req: NextRequest) {
     const { developerUserId } = await req.json();
 
     if (!developerUserId) {
-      return NextResponse.json(
-        { success: false, error: "developerUserId is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: "developerUserId is required" }, { status: 400 });
     }
 
-    const notifications = await fetchQuery(api.member.getNotifications, {
-      developerUserId,
-    });
+    const notifications = await fetchQuery(api.member.getNotifications, { developerUserId });
 
-    // Ensure notifications is an array and not undefined/null
-    const safeNotifications = Array.isArray(notifications) ? notifications : [];
-
-    return NextResponse.json({ success: true, notifications: safeNotifications });
+    return NextResponse.json({ success: true, notifications: notifications || [] }); // ✅ Always return an array
   } catch (error) {
-    console.error("Error in POST /api/v1/get-notifications:", error);
-
-    return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "An unknown error occurred" },
-      { status: 500 }
-    );
+    console.error("Error in API:", error);
+    return NextResponse.json({ success: false, error: "Internal Server Error" }, { status: 500 });
   }
 }
