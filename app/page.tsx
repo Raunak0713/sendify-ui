@@ -1,9 +1,8 @@
 "use client";
 
-import { NotificationFeed, Sendify } from "sendify";
+import { NotificationFeed } from "sendify";
 
 export default function Home() {
-  const sendify = new Sendify("123")
   return (
     <div className="flex justify-end mr-10 p-8">
       <NotificationFeed userId="test-user"/>
