@@ -14,7 +14,7 @@ const HeroSection = () => {
 
   return (
     <div className="text-white/85 flex flex-col items-center justify-center min-h-screen px-6 md:px-32 ">
-      <span className="border border-white/20 rounded-lg bg-blue-100/10 shadow-lg p-1 text-xs md:text-base">
+      <span className="border border-white/20 rounded-lg bg-blue-100/10 shadow-lg p-1 text-xs md:text-base mt-10 ">
         The Simplest Plug & Play Real-Time Notifications
       </span>
       <div className="mt-10 text-center text-3xl md:text-5xl mb-10">
