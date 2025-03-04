@@ -13,7 +13,7 @@ const HeroSection = () => {
   };
 
   return (
-    <div className="text-white/85 flex flex-col items-center justify-center min-h-screen px-6 md:px-32 bg-gradient-to-br from-zinc-900 to-black">
+    <div className="text-white/85 flex flex-col items-center justify-center min-h-screen px-6 md:px-32 ">
       <span className="border border-white/20 rounded-lg bg-blue-100/10 shadow-lg p-1 text-xs md:text-base">
         The Simplest Plug & Play Real-Time Notifications
       </span>
@@ -39,19 +39,20 @@ const HeroSection = () => {
       {copied && <div className="mt-2 text-xs text-green-400 animate-fade-in-out">Copied to clipboard!</div>}
       
       {/* Features Section */}
-      <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center w-full max-w-5xl">
-        <div className="p-6 bg-zinc-900/80 border border-white/10 rounded-lg shadow-lg">
-          <h3 className="text-xl font-semibold text-white">⚡ Instant Notifications</h3>
+      <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 md:gap-6 text-center w-full max-w-4xl md:max-w-5xl p-8 md:px-4">
+        <div className="p-4 bg-zinc-900/80 border border-white/10 rounded-lg shadow-lg">
+          <h3 className="text-lg font-semibold text-white">⚡ Instant Notifications</h3>
           <p className="text-white/70 mt-2 text-sm">Deliver real-time updates with zero delay across your application.</p>
         </div>
-        <div className="p-6 bg-zinc-900/80 border border-white/10 rounded-lg shadow-lg">
-          <h3 className="text-xl font-semibold text-white">🔧 Easy Integration</h3>
+        <div className="p-4 bg-zinc-900/80 border border-white/10 rounded-lg shadow-lg">
+          <h3 className="text-lg font-semibold text-white">🔧 Easy Integration</h3>
           <p className="text-white/70 mt-2 text-sm">Plug & play with minimal configuration, works seamlessly with React & Next.js.</p>
         </div>
-        <div className="p-6 bg-zinc-900/80 border border-white/10 rounded-lg shadow-lg">
-          <h3 className="text-xl font-semibold text-white">📡 Scalable & Reliable</h3>
+        <div className="p-4 bg-zinc-900/80 border border-white/10 rounded-lg shadow-lg">
+          <h3 className="text-lg font-semibold text-white">📡 Scalable & Reliable</h3>
           <p className="text-white/70 mt-2 text-sm">Built for modern web apps, ensuring stability and performance at scale.</p>
         </div>
+      
       </div>
       
       {/* Footer */}
