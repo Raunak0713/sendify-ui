@@ -1,8 +1,7 @@
 "use client";
 
 import { sendify } from "@/lib/sendify";
-import { NotificationFeed } from "./NotificationFeed";
-// import { NotificationFeed } from "sendify";
+import { NotificationFeed } from "sendify";
 
 export default function Home() {
   const handleSend = () => {

@@ -14,7 +14,7 @@
     "next": "15.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sendify": "^1.20.14",
+    "sendify": "^1.20.20",
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
