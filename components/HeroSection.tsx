@@ -36,7 +36,6 @@ const HeroSection = () => {
           </button>
         </div>
       </div>
-      {copied && <div className="mt-2 text-xs text-green-400 animate-fade-in-out">Copied to clipboard!</div>}
       
       {/* Features Section */}
       <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 md:gap-6 text-center w-full max-w-4xl md:max-w-5xl p-8 md:px-4">
@@ -56,7 +55,7 @@ const HeroSection = () => {
       </div>
       
       {/* Footer */}
-      <footer className="mt-16 py-6 text-center text-white/60 text-sm border-t border-white/10 w-full">
+      <footer className="mt-16   py-6 text-center text-white/60 text-sm border-t border-white/10 w-full">
         Made with ❤️ by Sendify | © {new Date().getFullYear()} All rights reserved.
       </footer>
     </div>

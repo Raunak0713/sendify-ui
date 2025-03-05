@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button'; 
+import { SignInButton, SignUpButton } from '@clerk/nextjs';
 
 const Navbar = () => {
   return (
@@ -13,8 +14,12 @@ const Navbar = () => {
         </div>
 
         <div>
-          <Button variant={"outline"} className="mr-2">Sign Up</Button>
-          <Button>Sign In</Button>
+          <SignUpButton>
+            <Button variant={"outline"} className="mr-2">Sign Up</Button>
+          </SignUpButton>
+          <SignInButton>
+            <Button>Sign In</Button>
+          </SignInButton>
         </div>
       </div>
     </div>
