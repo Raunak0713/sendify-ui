@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useMutation, useQuery } from "convex/react";
@@ -17,7 +17,7 @@ interface Project {
   APIKEY: string;
 }
 
-const ProjectCard = ({ project, router }: { project: Project; router: ReturnType<typeof useRouter> }) => {
+const ProjectCard = ({ project, router } : { project: Project; router: ReturnType<typeof useRouter> }) => {
   return (
     <Card
       onClick={() => router.push(`/projects/${project._id}`)}
