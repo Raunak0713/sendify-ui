@@ -2,7 +2,7 @@ import React from 'react'
 
 const DocsPage = () => {
   return (
-    <div>DocsPage</div>
+    <div className='text-white'>DocsPage</div>
   )
 }
 

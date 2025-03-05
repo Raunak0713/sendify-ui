@@ -2,7 +2,7 @@ import React from 'react'
 
 const PlaygroundPage = () => {
   return (
-    <div>PlaygroundPage</div>
+    <div className='text-white'>PlaygroundPage</div>
   )
 }
 

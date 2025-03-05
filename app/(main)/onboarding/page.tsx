@@ -16,7 +16,7 @@ const page = async () => {
       profileImg : user.imageUrl
     })
   }
-  return redirect("/dashboard")
+  return redirect("/dashboard/projects")
 }
 
 export default page
