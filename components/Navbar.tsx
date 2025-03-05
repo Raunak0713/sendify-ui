@@ -3,7 +3,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button'; 
 import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs';
-import { CircleArrowRight, DoorOpen } from 'lucide-react';
+import { CircleArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 const Navbar = () => {
