@@ -56,7 +56,7 @@ const Sidebar = () => {
         <nav className="mt-4">
           <ul className="space-y-3">
             {sidebarItems.map((item, index) => {
-              const isActive = pathname === item.link;
+              const isActive = pathname.startsWith(item.link);
               return (
                 <li key={index}>
                   <a

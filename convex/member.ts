@@ -101,3 +101,12 @@ export const deleteInactiveUsers = internalMutation({
     }
   },
 });
+
+export const deleteMember = mutation({
+  args : {
+    id : v.id("members")
+  },
+  handler : async (ctx, args) => {
+    await ctx.db.delete(args.id)
+  }
+})

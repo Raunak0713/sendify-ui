@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button'; 
-import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs';
+import { UserButton, useUser } from '@clerk/nextjs';
 import { CircleArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -30,12 +30,12 @@ const Navbar = () => {
           </div>
         ) : (
           <div>
-            <SignUpButton>
+            <Link href={"/sign-up"}>
               <Button variant={"outline"} className="mr-2">Sign Up</Button>
-            </SignUpButton>
-            <SignInButton>
+            </Link>
+            <Link href={"/sign-up"}>
               <Button>Sign In</Button>
-            </SignInButton>
+            </Link>
           </div>
         )}
         

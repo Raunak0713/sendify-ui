@@ -48,7 +48,6 @@ export const createProject = mutation({
 });
 
 
-
 export const getProjectById = query({
   args: {
     projectId: v.id("projects"),
@@ -65,3 +64,25 @@ export const getProjectById = query({
     return { project, members };
   },
 });
+
+export const  changeProjectName = mutation({
+  args : { 
+    id : v.id("projects"),
+    name : v.string()
+  },
+  handler : async (ctx, args) => { 
+    const project = await ctx.db.get(args.id)
+    await ctx.db.patch(args.id,{
+      name : args.name
+    })
+  }
+})
+
+export const deleteProject = mutation({
+  args : {
+    id : v.id("projects")
+  },
+  handler : async (ctx, args) => {
+    await ctx.db.delete(args.id)
+  },
+})
