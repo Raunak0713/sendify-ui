@@ -25,7 +25,9 @@ export default defineSchema({
   members: defineTable({
     projectId : v.id("projects"),
     developerUserId: v.string(),
-  }).index("byDeveloperUserId", ["developerUserId"]),
+  })
+    .index("byDeveloperUserId", ["developerUserId"])
+    .index("by_projectId", ["projectId"]),
 
   notificationMembers: defineTable({
     notificationId: v.id("notifications"),

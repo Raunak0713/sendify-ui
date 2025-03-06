@@ -20,7 +20,7 @@ interface Project {
 const ProjectCard = ({ project, router } : { project: Project; router: ReturnType<typeof useRouter> }) => {
   return (
     <Card
-      onClick={() => router.push(`/projects/${project._id}`)}
+      onClick={() => router.push(`/dashboard/projects/${project._id}`)}
       className="w-full max-w-sm bg-transparent border-gray-100/20 text-white cursor-pointer transition"
     >
       <CardHeader>

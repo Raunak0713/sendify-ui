@@ -46,3 +46,22 @@ export const createProject = mutation({
     return { projectId, apiKey };
   },
 });
+
+
+
+export const getProjectById = query({
+  args: {
+    projectId: v.id("projects"),
+  },
+  handler: async (ctx, args) => {
+    const project = await ctx.db.get(args.projectId);
+    if (!project) throw new Error("Project not found");
+
+    const members = await ctx.db
+      .query("members")
+      .withIndex("by_projectId", (q) => q.eq("projectId", args.projectId))
+      .collect();
+
+    return { project, members };
+  },
+});
