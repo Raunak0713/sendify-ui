@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { api } from "@/convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 import { currentUser } from "@clerk/nextjs/server";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
 import { redirect } from "next/navigation";

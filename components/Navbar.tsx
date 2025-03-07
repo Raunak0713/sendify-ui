@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react';
-import { Button } from '@/components/ui/button'; 
+import { Button } from '../components/ui/button'; 
 import { UserButton, useUser } from '@clerk/nextjs';
 import { CircleArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -20,7 +20,7 @@ const Navbar = () => {
 
         {user ? (
           <div className='flex items-center gap-3'>
-            <Link href={"/dashboard/projects"}>
+            <Link href={"/dashboard"}>
               <Button>
                 Dashboard
                 <CircleArrowRight />
