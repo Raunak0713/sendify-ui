@@ -65,9 +65,6 @@ const ProjectsPage = () => {
       ) : (
         <div className="text-center mt-10">
           <p className="text-lg text-zinc-400">No projects found.</p>
-          <Button onClick={() => setOpen(true)} className="mt-4">
-            Create a Project
-          </Button>
         </div>
       )}
 
