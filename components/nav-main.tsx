@@ -33,7 +33,7 @@ export function NavMain({
   }[]
 }) {
   return (
-    <SidebarGroup>
+    <SidebarGroup className="active:bg-transparent">
       <SidebarGroupLabel className="text-white/50">Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
@@ -45,17 +45,17 @@ export function NavMain({
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
+                <SidebarMenuButton tooltip={item.title} className="active:bg-transparent active:text-gray-600">
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
-              <CollapsibleContent className="border-gray-100/10 hover:bg-transparent focus:bg-transparent active:bg-transparent">
-                <SidebarMenuSub  className="border-gray-100/10 hover:bg-transparent focus:bg-transparent active:bg-transparent">
+              <CollapsibleContent className="border-gray-100/10">
+                <SidebarMenuSub  className="border-gray-100/10">
                   {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title} className="focus:bg-transparent active:bg-transparent">
-                      <SidebarMenuSubButton asChild>
+                    <SidebarMenuSubItem key={subItem.title}>
+                      <SidebarMenuSubButton asChild className="active:bg-transparent active:text-gray-600">
                         <a href={subItem.url}>
                           <span className="text-white/50">{subItem.title}</span>
                         </a>
