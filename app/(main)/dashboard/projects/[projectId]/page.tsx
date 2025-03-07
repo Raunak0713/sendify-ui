@@ -84,17 +84,19 @@ const ProjectPage = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>#</TableHead>
-                <TableHead>User ID</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="w-12">#</TableHead>
+                <TableHead className="flex-1">User ID</TableHead>
+                <TableHead className="flex-1">Sendify User ID</TableHead>
+                <TableHead className="w-24 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {projectData.members.map((member, index) => (
                 <TableRow key={member._id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{member.developerUserId}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="w-12">{index + 1}</TableCell>
+                  <TableCell className="flex-1">{member.developerUserId}</TableCell>
+                  <TableCell className="flex-1">{member.developerUserId}</TableCell>
+                  <TableCell className="w-24 text-right">
                     <Button variant="destructive" size="sm">
                       <Trash2 size={16} />
                     </Button>
