@@ -51,10 +51,10 @@ export function NavMain({
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
+              <CollapsibleContent className="border-gray-100/10 hover:bg-transparent focus:bg-transparent active:bg-transparent">
+                <SidebarMenuSub  className="border-gray-100/10 hover:bg-transparent focus:bg-transparent active:bg-transparent">
                   {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
+                    <SidebarMenuSubItem key={subItem.title} className="focus:bg-transparent active:bg-transparent">
                       <SidebarMenuSubButton asChild>
                         <a href={subItem.url}>
                           <span className="text-white/50">{subItem.title}</span>

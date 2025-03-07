@@ -23,6 +23,7 @@ import {
   SidebarRail,
 } from "./ui/sidebar"
 import Link from "next/link"
+import { UserButton } from "@clerk/nextjs"
 
 // This is sample data.
 const data = {
@@ -156,8 +157,8 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props} className="border-none">
-      <SidebarHeader>
+    <Sidebar collapsible="icon" {...props} className="border-none bg-black">
+      <SidebarHeader className="bg-black">
         <Link href={"/"} className="text-white py-1 flex gap-3 items-center">
           <div className="py-1 px-2 md:py-2 md:px-4 bg-white rounded-sm relative logo-container">
             <div className="text-zinc-900 font-bold text-sm md:text-lg">S</div>
@@ -165,12 +166,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <div className="font-bold text-xl sendify-text">Sendify</div>
         </Link>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="bg-black">
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
+      <SidebarFooter className="bg-black">
+        <UserButton />
       </SidebarFooter>
       <SidebarRail />
       
