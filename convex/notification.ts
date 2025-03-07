@@ -8,9 +8,9 @@ export const createNotifications = mutation({
     content: v.string(),
     buttonText: v.optional(v.string()),
     buttonUrl: v.optional(v.string()),
+    projectId : v.id("projects")
   },
   handler: async (ctx, args) => {
-    const projectId = "j9766ejvrqcmmsn5hbnearpc497baxrb" as Id<"projects">;
 
     const memberIds: Id<"members">[] = [];
     for (const devUserId of args.members) {
@@ -22,7 +22,7 @@ export const createNotifications = mutation({
       if (!member) {
         const newMemberId = await ctx.db.insert("members", {
           developerUserId: devUserId,
-          projectId: projectId,
+          projectId: args.projectId,
         });
         memberIds.push(newMemberId);
       } else {
@@ -31,7 +31,7 @@ export const createNotifications = mutation({
     }
 
     const notificationId = await ctx.db.insert("notifications", {
-      projectId,
+      projectId : args.projectId,
       content: args.content,
       buttonText: args.buttonText,
       buttonUrl: args.buttonUrl,

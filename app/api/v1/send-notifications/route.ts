@@ -4,13 +4,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { userIds, content, buttonText, buttonUrl } = await req.json();
+    const { userIds, content, buttonText, buttonUrl, projectId } = await req.json();
 
     await fetchMutation(api.notification.createNotifications, {
       members: userIds,
       content,
       buttonText,
       buttonUrl,
+      projectId
     });
 
 

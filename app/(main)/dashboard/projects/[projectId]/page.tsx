@@ -8,7 +8,7 @@ import { Input } from "../../../../../components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../../../../components/ui/tabs";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../../../../../components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../../../../components/ui/dialog";
-import { Eye, Trash2, Copy } from "lucide-react";
+import { Eye, Trash2, Copy, Rocket } from "lucide-react";
 import { toast } from "sonner";
 import { useParams, useRouter } from "next/navigation";
 import { Id } from "../../../../../convex/_generated/dataModel";
@@ -19,11 +19,18 @@ const ProjectPage = () => {
   const projectData = useQuery(api.project.getProjectById, { projectId });
   const updateProjectName = useMutation(api.project.changeProjectName);
   const deleteProject = useMutation(api.project.deleteProject);
+  const sendNotification = useMutation(api.notification.createNotifications);
   const router = useRouter();
   
   const [apiKeyVisible, setApiKeyVisible] = useState(false);
   const [newName, setNewName] = useState("");
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openPopover, setOpenPopover] = useState(null);
+  const [notificationData, setNotificationData] = useState({
+    content: "",
+    buttonText: "",
+    buttonUrl: ""
+  });
 
   useEffect(() => {
     if (projectData?.project?.name) {
@@ -45,6 +52,18 @@ const ProjectPage = () => {
   const handleCopyApiKey = () => {
     navigator.clipboard.writeText(projectData.project.APIKEY);
     toast.success("API Key copied to clipboard");
+  };
+
+  const handleSendNotification = async (developerUserId) => {
+    await sendNotification({
+      members: [developerUserId],
+      content: notificationData.content,
+      buttonText: notificationData.buttonText,
+      buttonUrl: notificationData.buttonUrl,
+      projectId
+    });
+    toast.success("Notification sent successfully");
+    setOpenPopover(null);
   };
 
   if (!projectData) return <div>Loading...</div>;
@@ -86,7 +105,8 @@ const ProjectPage = () => {
               <TableRow>
                 <TableHead className="w-12">#</TableHead>
                 <TableHead className="flex-1">User ID</TableHead>
-                <TableHead className="flex-1">Sendify User ID</TableHead>
+                <TableHead className="flex-1">Sendify ID</TableHead>
+                <TableHead className="flex-1">Send Notification</TableHead>
                 <TableHead className="w-24 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -95,7 +115,12 @@ const ProjectPage = () => {
                 <TableRow key={member._id}>
                   <TableCell className="w-12">{index + 1}</TableCell>
                   <TableCell className="flex-1">{member.developerUserId}</TableCell>
-                  <TableCell className="flex-1">{member._id}</TableCell>
+                  <TableCell className="flex-1">{member.developerUserId}</TableCell>
+                  <TableCell className="flex-1">
+                    <Button size="sm" variant="destructive" onClick={() => setOpenPopover(member._id)}>
+                      Test <Rocket size={16} className="hidden sm:inline" />
+                    </Button>
+                  </TableCell>
                   <TableCell className="w-24 text-right">
                     <Button variant="destructive" size="sm">
                       <Trash2 size={16} />
@@ -105,22 +130,6 @@ const ProjectPage = () => {
               ))}
             </TableBody>
           </Table>
-        </TabsContent>
-
-        <TabsContent value="general">
-          <label className="text-sm">Change Project Name</label>
-          <Input
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            className="mb-4"
-          />
-          <Button onClick={handleUpdateName}>Save</Button>
-
-          <div className="mt-6">
-            <Button variant="destructive" onClick={() => setOpenDeleteDialog(true)}>
-              Delete Project
-            </Button>
-          </div>
         </TabsContent>
       </Tabs>
 
