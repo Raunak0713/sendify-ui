@@ -95,7 +95,7 @@ const ProjectPage = () => {
                 <TableRow key={member._id}>
                   <TableCell className="w-12">{index + 1}</TableCell>
                   <TableCell className="flex-1">{member.developerUserId}</TableCell>
-                  <TableCell className="flex-1">{member.developerUserId}</TableCell>
+                  <TableCell className="flex-1">{member._id}</TableCell>
                   <TableCell className="w-24 text-right">
                     <Button variant="destructive" size="sm">
                       <Trash2 size={16} />
