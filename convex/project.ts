@@ -65,7 +65,7 @@ export const getProjectById = query({
   },
 });
 
-export const  changeProjectName = mutation({
+export const changeProjectName = mutation({
   args : { 
     id : v.id("projects"),
     name : v.string()

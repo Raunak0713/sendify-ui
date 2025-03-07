@@ -9,7 +9,6 @@ import {
 } from "../components/ui/collapsible"
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -34,7 +33,6 @@ export function NavMain({
 }) {
   return (
     <SidebarGroup className="active:bg-transparent">
-      <SidebarGroupLabel className="text-white/50">Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible

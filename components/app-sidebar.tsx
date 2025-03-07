@@ -1,19 +1,13 @@
 "use client"
+import { UserButton } from "@clerk/nextjs"
 import {
-  AudioWaveform,
   BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
   Settings2,
-  SquareTerminal,
+  SquareTerminal
 } from "lucide-react"
+import Link from "next/link"
 import * as React from "react"
 import { NavMain } from "../components/nav-main"
-import { NavProjects } from "../components/nav-projects"
 import {
   Sidebar,
   SidebarContent,
@@ -21,76 +15,28 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "./ui/sidebar"
-import Link from "next/link"
-import { UserButton } from "@clerk/nextjs"
 
-// This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
-      title: "Playground",
+      title: "Projects",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "My Projects",
+          url: "/dashboard/projects",
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
+          title: "Create Project",
+          url: "/dashboard/projects",
         },
       ],
     },
     {
       title: "Documentation",
-      url: "#",
+      url: "/dashboard/documentation",
       icon: BookOpen,
       items: [
         {
@@ -112,54 +58,48 @@ const data = {
       ],
     },
     {
-      title: "Settings",
+      title: "Billing",
       url: "#",
       icon: Settings2,
       items: [
         {
-          title: "General",
-          url: "#",
+          title: "Bronze 🥉",
+          url: "/dashboard/billing",
         },
         {
-          title: "Team",
-          url: "#",
+          title: "Silver 🥈",
+          url: "/dashboard/billing",
         },
         {
-          title: "Billing",
-          url: "#",
+          title: "Gold 🥇",
+          url: "/dashboard/billing",
         },
         {
-          title: "Limits",
-          url: "#",
+          title: "Diamond 💎",
+          url: "/dashboard/billing",
+        },
+      ],
+    },
+    {
+      title: "Playground",
+      url: "/dashboard/playground",
+      icon: Settings2,
+      items: [
+        {
+          title: "Test Components",
+          url: "/dashboard/playground",
         },
       ],
     },
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props} className="border-none bg-black">
       <SidebarHeader className="bg-black">
         <Link href={"/"} className="text-white py-1 flex gap-3 items-center">
-          <div className="py-1 px-2 md:py-2 md:px-4 bg-white rounded-sm relative logo-container">
+          <div className="py-1 px-2 md:py-[6px] md:px-[14px] bg-white rounded-sm relative logo-container">
             <div className="text-zinc-900 font-bold text-sm md:text-lg">S</div>
           </div>
           <div className="font-bold text-xl sendify-text">Sendify</div>
@@ -167,7 +107,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent className="bg-black">
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter className="bg-black">
         <UserButton />
