@@ -46,8 +46,7 @@ const page = async () => {
   }
 
   // 🚀 Move redirect OUTSIDE of try-catch
-  console.log("🚀 Redirecting to /dashboard/projects...");
-  return redirect("/dashboard/projects");
+  return redirect("/dashboard");
 };
 
 export default page;
