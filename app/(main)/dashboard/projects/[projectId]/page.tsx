@@ -8,10 +8,12 @@ import { Input } from "../../../../../components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../../../../components/ui/tabs";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../../../../../components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../../../../components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "../../../../../components/ui/popover";
 import { Eye, Trash2, Copy, Rocket } from "lucide-react";
 import { toast } from "sonner";
 import { useParams, useRouter } from "next/navigation";
 import { Id } from "../../../../../convex/_generated/dataModel";
+import { fetchMutation } from "convex/nextjs";
 
 const ProjectPage = () => {
   const params = useParams()
@@ -54,16 +56,31 @@ const ProjectPage = () => {
     toast.success("API Key copied to clipboard");
   };
 
-  const handleSendNotification = async (developerUserId) => {
+  const handleDelete = async (id : Id<"members">) => {
+    await fetchMutation(api.member.deleteMember, { id : id })
+    toast.success("Member Delete Successfully")
+  }
+
+  const handleSendNotification = async (memberId) => {
+    if (!notificationData.content) {
+      toast.error("Notification content is required");
+      return;
+    }
+
     await sendNotification({
-      members: [developerUserId],
+      members: [memberId],
+      projectId,
       content: notificationData.content,
       buttonText: notificationData.buttonText,
-      buttonUrl: notificationData.buttonUrl,
-      projectId
+      buttonUrl: notificationData.buttonUrl
     });
     toast.success("Notification sent successfully");
     setOpenPopover(null);
+    setNotificationData({
+      content: "",
+      buttonText: "",
+      buttonUrl: ""
+    });
   };
 
   if (!projectData) return <div>Loading...</div>;
@@ -115,14 +132,60 @@ const ProjectPage = () => {
                 <TableRow key={member._id}>
                   <TableCell className="w-12">{index + 1}</TableCell>
                   <TableCell className="flex-1">{member.developerUserId}</TableCell>
-                  <TableCell className="flex-1">{member.developerUserId}</TableCell>
+                  <TableCell className="flex-1">{member._id}</TableCell>
                   <TableCell className="flex-1">
-                    <Button size="sm" variant="destructive" onClick={() => setOpenPopover(member._id)}>
-                      Test <Rocket size={16} className="hidden sm:inline" />
-                    </Button>
+                    <Popover open={openPopover === member._id} onOpenChange={(open) => setOpenPopover(open ? member._id : null)}>
+                      <PopoverTrigger asChild>
+                        <Button size="sm" variant="destructive">
+                          <span className="hidden sm:inline mr-1">Send</span> 
+                          <Rocket size={16} />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80 dark">
+                        <div className="space-y-4">
+                          <h3 className="font-medium">Send Notification to {member.developerUserId}</h3>
+                          
+                          <div className="space-y-2">
+                            <label className="text-sm">Content</label>
+                            <Input
+                              className="mt-1"
+                              value={notificationData.content}
+                              onChange={(e) => setNotificationData(prev => ({ ...prev, content: e.target.value }))}
+                              placeholder="Notification message"
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <label className="text-sm">Button Text (Optional)</label>
+                            <Input
+                              className="mt-1"
+                              value={notificationData.buttonText}
+                              onChange={(e) => setNotificationData(prev => ({ ...prev, buttonText: e.target.value }))}
+                              placeholder="View details"
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <label className="text-sm">Button URL (Optional)</label>
+                            <Input
+                              className="mt-1"
+                              value={notificationData.buttonUrl}
+                              onChange={(e) => setNotificationData(prev => ({ ...prev, buttonUrl: e.target.value }))}
+                              placeholder="https://example.com"
+                            />
+                          </div>
+                          
+                          <div className="flex justify-end">
+                            <Button size="sm" variant="destructive" onClick={() => handleSendNotification(member.developerUserId)}>
+                              Send Notification
+                            </Button>
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   </TableCell>
                   <TableCell className="w-24 text-right">
-                    <Button variant="destructive" size="sm">
+                    <Button variant="destructive" size="sm" onClick={() => handleDelete(member._id)}>
                       <Trash2 size={16} />
                     </Button>
                   </TableCell>
@@ -130,6 +193,27 @@ const ProjectPage = () => {
               ))}
             </TableBody>
           </Table>
+        </TabsContent>
+
+        <TabsContent value="general">
+          <div className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-end gap-4">
+              <div className="flex-1">
+                <label className="text-sm block mb-1">Change Project Name</label>
+                <Input 
+                  value={newName} 
+                  onChange={(e) => setNewName(e.target.value)} 
+                />
+              </div>
+              <Button onClick={handleUpdateName}>Save</Button>
+            </div>
+
+            <div>
+              <Button variant="destructive" onClick={() => setOpenDeleteDialog(true)}>
+                Delete Project
+              </Button>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
 

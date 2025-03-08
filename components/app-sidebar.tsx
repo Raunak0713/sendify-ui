@@ -20,7 +20,7 @@ const data = {
   navMain: [
     {
       title: "Projects",
-      url: "#",
+      url: "/dashboard/projects",
       icon: SquareTerminal,
       isActive: true,
       items: [
