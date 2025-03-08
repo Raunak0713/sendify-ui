@@ -13,7 +13,6 @@ import { Eye, Trash2, Copy, Rocket } from "lucide-react";
 import { toast } from "sonner";
 import { useParams, useRouter } from "next/navigation";
 import { Id } from "../../../../../convex/_generated/dataModel";
-import { fetchMutation } from "convex/nextjs";
 
 const ProjectPage = () => {
   const params = useParams()
@@ -56,31 +55,31 @@ const ProjectPage = () => {
     toast.success("API Key copied to clipboard");
   };
 
-  const handleDelete = async (id : Id<"members">) => {
-    await fetchMutation(api.member.deleteMember, { id : id })
-    toast.success("Member Delete Successfully")
-  }
-
   const handleSendNotification = async (memberId) => {
     if (!notificationData.content) {
       toast.error("Notification content is required");
       return;
     }
 
-    await sendNotification({
-      members: [memberId],
-      projectId,
-      content: notificationData.content,
-      buttonText: notificationData.buttonText,
-      buttonUrl: notificationData.buttonUrl
-    });
-    toast.success("Notification sent successfully");
-    setOpenPopover(null);
-    setNotificationData({
-      content: "",
-      buttonText: "",
-      buttonUrl: ""
-    });
+    try {
+      await sendNotification({
+        members: [memberId], // Pass as array with single member
+        projectId,
+        content: notificationData.content,
+        buttonText: notificationData.buttonText || undefined,
+        buttonUrl: notificationData.buttonUrl || undefined
+      });
+      toast.success("Notification sent successfully");
+      setOpenPopover(null);
+      setNotificationData({
+        content: "",
+        buttonText: "",
+        buttonUrl: ""
+      });
+    } catch (error) {
+      toast.error("Failed to send notification");
+      console.error("Notification error:", error);
+    }
   };
 
   if (!projectData) return <div>Loading...</div>;
@@ -120,20 +119,20 @@ const ProjectPage = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-12">#</TableHead>
-                <TableHead className="flex-1">User ID</TableHead>
-                <TableHead className="flex-1">Sendify ID</TableHead>
-                <TableHead className="flex-1">Send Notification</TableHead>
-                <TableHead className="w-24 text-right">Actions</TableHead>
+                <TableHead className="w-12 text-center">#</TableHead>
+                <TableHead className="flex-1 text-center">User ID</TableHead>
+                <TableHead className="flex-1 text-center">Sendify ID</TableHead>
+                <TableHead className="flex-1 text-center">Send Notification</TableHead>
+                <TableHead className="w-24 text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {projectData.members.map((member, index) => (
                 <TableRow key={member._id}>
-                  <TableCell className="w-12">{index + 1}</TableCell>
-                  <TableCell className="flex-1">{member.developerUserId}</TableCell>
-                  <TableCell className="flex-1">{member._id}</TableCell>
-                  <TableCell className="flex-1">
+                  <TableCell className="w-12 text-center">{index + 1}</TableCell>
+                  <TableCell className="flex-1 text-center">{member.developerUserId}</TableCell>
+                  <TableCell className="flex-1 text-center">{member._id}</TableCell>
+                  <TableCell className="flex-1 text-center">
                     <Popover open={openPopover === member._id} onOpenChange={(open) => setOpenPopover(open ? member._id : null)}>
                       <PopoverTrigger asChild>
                         <Button size="sm" variant="destructive">
@@ -143,12 +142,11 @@ const ProjectPage = () => {
                       </PopoverTrigger>
                       <PopoverContent className="w-80 dark">
                         <div className="space-y-4">
-                          <h3 className="font-medium">Send Notification to {member.developerUserId}</h3>
+                          <h3 className="font-medium">Send Notification</h3>
                           
                           <div className="space-y-2">
                             <label className="text-sm">Content</label>
                             <Input
-                              className="mt-1"
                               value={notificationData.content}
                               onChange={(e) => setNotificationData(prev => ({ ...prev, content: e.target.value }))}
                               placeholder="Notification message"
@@ -158,7 +156,6 @@ const ProjectPage = () => {
                           <div className="space-y-2">
                             <label className="text-sm">Button Text (Optional)</label>
                             <Input
-                              className="mt-1"
                               value={notificationData.buttonText}
                               onChange={(e) => setNotificationData(prev => ({ ...prev, buttonText: e.target.value }))}
                               placeholder="View details"
@@ -168,7 +165,6 @@ const ProjectPage = () => {
                           <div className="space-y-2">
                             <label className="text-sm">Button URL (Optional)</label>
                             <Input
-                              className="mt-1"
                               value={notificationData.buttonUrl}
                               onChange={(e) => setNotificationData(prev => ({ ...prev, buttonUrl: e.target.value }))}
                               placeholder="https://example.com"
@@ -184,8 +180,8 @@ const ProjectPage = () => {
                       </PopoverContent>
                     </Popover>
                   </TableCell>
-                  <TableCell className="w-24 text-right">
-                    <Button variant="destructive" size="sm" onClick={() => handleDelete(member._id)}>
+                  <TableCell className="w-24 text-center">
+                    <Button variant="destructive" size="sm">
                       <Trash2 size={16} />
                     </Button>
                   </TableCell>
