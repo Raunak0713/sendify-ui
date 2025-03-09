@@ -24,6 +24,7 @@ const ProjectPage = () => {
   const router = useRouter();
   
   const [apiKeyVisible, setApiKeyVisible] = useState(false);
+  const [projectIdVisible, setProjectIdVisible] = useState(false);
   const [newName, setNewName] = useState("");
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openPopover, setOpenPopover] = useState(null);
@@ -54,6 +55,11 @@ const ProjectPage = () => {
     navigator.clipboard.writeText(projectData.project.APIKEY);
     toast.success("API Key copied to clipboard");
   };
+
+  const handleCopyProjectId = () => {
+    navigator.clipboard.writeText(projectData.project._id);
+    toast.success("PROJECT ID copied to clipboard");
+  }
 
   const handleSendNotification = async (memberId) => {
     if (!notificationData.content) {
@@ -89,22 +95,42 @@ const ProjectPage = () => {
       <h1 className="text-2xl font-bold mb-6">{projectData.project.name}</h1>
 
       <div className="w-full max-w-4xl">
-        <div className="flex items-center gap-4 mb-6 flex-wrap sm:flex-nowrap">
-          <label className="text-sm whitespace-nowrap">API KEY</label>
-          <div className="relative flex-1 max-w-md flex items-center gap-2">
-            <Input 
-              value={apiKeyVisible ? projectData.project.APIKEY : "••••••••••••••••••••••••••"} 
-              readOnly 
-              className="pr-10 w-full"
-            />
-            <Eye
-              className="cursor-pointer text-white/50"
-              onClick={() => setApiKeyVisible(!apiKeyVisible)}
-            />
-            <Copy 
-              className="cursor-pointer text-white/50" 
-              onClick={handleCopyApiKey} 
-            />
+        <div className="flex flex-col gap-4 mb-6 flex-wrap sm:flex-nowrap">
+          <div className="flex items-center gap-12">
+            <label className="text-sm whitespace-nowrap">API KEY</label>
+            <div className="relative flex-1 max-w-md flex items-center gap-2">
+              <Input 
+                value={apiKeyVisible ? projectData.project.APIKEY : "••••••••••••••••••••••••••"} 
+                readOnly 
+                className="pr-10 w-full"
+              />
+              <Eye
+                className="cursor-pointer text-white/50"
+                onClick={() => setApiKeyVisible(!apiKeyVisible)}
+              />
+              <Copy 
+                className="cursor-pointer text-white/50" 
+                onClick={handleCopyApiKey} 
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-5">
+            <label className="text-sm whitespace-nowrap">PROJECT ID</label>
+            <div className="relative flex-1 max-w-md flex items-center gap-2">
+              <Input 
+                value={projectIdVisible ? projectData.project._id : "••••••••••••••••••••••••••"} 
+                readOnly 
+                className="pr-10 w-full"
+              />
+              <Eye
+                className="cursor-pointer text-white/50"
+                onClick={() => setProjectIdVisible(!projectIdVisible)}
+              />
+              <Copy 
+                className="cursor-pointer text-white/50" 
+                onClick={handleCopyProjectId} 
+              />
+            </div>
           </div>
         </div>
       </div>

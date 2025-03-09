@@ -28,7 +28,7 @@ export function NotificationFeed({ userId, align = "end", light, dark }: Notific
   const popoverRef = useRef<HTMLDivElement>(null)
   const bellRef = useRef<HTMLDivElement>(null)
 
-  const isDarkMode = dark ?? !light;
+  const isDarkMode = dark ?? light;
 
   useEffect(() => {
     const fetchNotifications = async () => {
