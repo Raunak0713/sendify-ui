@@ -45,3 +45,39 @@ export const createNotifications = mutation({
     }
   },
 });
+
+
+
+export const deleteNotificationForMember = mutation({
+  args: { 
+    notificationId: v.id("notifications"),
+    developerUserId: v.string() 
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("members")
+      .filter((q) => q.eq(q.field("developerUserId"), args.developerUserId))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
+    const notificationMember = await ctx.db
+      .query("notificationMembers")
+      .filter((q) => 
+        q.and(
+          q.eq(q.field("memberId"), user._id),
+          q.eq(q.field("notificationId"), args.notificationId)
+        )
+      )
+      .first();
+
+    if (!notificationMember) {
+      throw new Error("Notification not found for this user.");
+    }
+
+    // Delete the specific notification association
+    await ctx.db.delete(notificationMember._id);
+  },
+});

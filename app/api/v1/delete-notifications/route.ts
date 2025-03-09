@@ -5,25 +5,17 @@ import { api } from "../../../../convex/_generated/api";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { developerUserId } = body;
+    
+    const { notificationId, developerUserId } = body;
 
-    // 🛑 Validate input
-    if (!developerUserId || typeof developerUserId !== "string") {
-      return NextResponse.json(
-        { success: false, message: "Invalid developerUserId provided" },
-        { status: 400 }
-      );
-    }
-
-    // 🗑 Call Convex mutation directly
-    await fetchMutation(api.member.deleteUserNotifications, { developerUserId });
+    await fetchMutation(api.notification.deleteNotificationForMember, { notificationId, developerUserId });
 
     return NextResponse.json(
-      { success: true, message: "Notifications deleted successfully" },
+      { success: true, message: "Notification deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
-    console.error("🚨 Error deleting notifications:", error);
+    console.error("🚨 Error deleting notification:", error);
 
     return NextResponse.json(
       { success: false, message: "Internal server error" },
