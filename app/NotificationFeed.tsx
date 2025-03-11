@@ -1,28 +1,30 @@
-import { useEffect, useState } from 'react';
-import { BellIcon, XIcon } from "lucide-react";
-import { motion } from "framer-motion";
-import { io } from 'socket.io-client';
+"use client"
+
+import { useEffect, useState } from "react"
+import { BellIcon, XIcon } from "lucide-react"
+import { motion } from "framer-motion"
+import { io } from "socket.io-client"
 
 // Define the notification type
 type NotificationPayload = {
-  content?: string;
-  buttonText?: string;
-  buttonUrl?: string;
-  timestamp?: string;
-  _id?: string;
-};
-
-interface NotificationFeedProps {
-  userId : string
+  notificationId: string
+  content: string
+  buttonText?: string
+  buttonUrl?: string
+  timestamp?: string
 }
 
-function NotificationFeed({ userId = "mnb" } : NotificationFeedProps) {
-  const [isCardOpen, setIsCardOpen] = useState(false);
-  const [notifications, setNotifications] = useState<NotificationPayload[]>([]);
+interface NotificationFeedProps {
+  userId: string
+}
+
+function NotificationFeed({ userId = "mnb" }: NotificationFeedProps) {
+  const [isCardOpen, setIsCardOpen] = useState(false)
+  const [notifications, setNotifications] = useState<NotificationPayload[]>([])
 
   const toggleCard = () => {
-    setIsCardOpen(!isCardOpen);
-  };
+    setIsCardOpen(!isCardOpen)
+  }
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -38,7 +40,9 @@ function NotificationFeed({ userId = "mnb" } : NotificationFeedProps) {
         const data = await response.json()
         console.log("Notifications response:", data)
         if (data.success && Array.isArray(data.notifications)) {
-          setNotifications(data.notifications)
+          // Ensure each notification has a notificationId
+          const validNotifications = data.notifications.filter((notification: any) => notification.notificationId)
+          setNotifications(validNotifications)
         }
       } catch (error) {
         console.error("Failed to fetch notifications:", error)
@@ -54,8 +58,18 @@ function NotificationFeed({ userId = "mnb" } : NotificationFeedProps) {
     socket.emit("register", userId)
 
     socket.on("new-notification", (data: NotificationPayload) => {
-      console.log(data)
-      const enhancedData = { ...data, timestamp: data.timestamp || new Date().toISOString() }
+      console.log("Received Data:", data)
+      // Ensure the notification has a valid notificationId before adding it
+      if (!data.notificationId) {
+        console.error("Received notification without notificationId:", data)
+        return
+      }
+
+      const enhancedData = {
+        ...data,
+        timestamp: data.timestamp || new Date().toISOString(),
+        notificationId: data.notificationId, // Ensure notificationId is explicitly set
+      }
       setNotifications((prev) => [enhancedData, ...prev])
     })
 
@@ -65,7 +79,12 @@ function NotificationFeed({ userId = "mnb" } : NotificationFeedProps) {
   }, [userId])
 
   const handleDeleteNotification = async (notificationId: string) => {
-    console.log("NID", notificationId)
+    if (!notificationId) {
+      console.error("Cannot delete notification: Missing notificationId")
+      return
+    }
+
+    console.log("Deleting notification with ID:", notificationId)
     try {
       console.log("Preparing to send delete request")
       const response = await fetch("https://sendify.100xbuild.com/api/v1/delete-notifications", {
@@ -78,9 +97,9 @@ function NotificationFeed({ userId = "mnb" } : NotificationFeedProps) {
           developerUserId: userId,
         }),
       })
-      
+
       console.log("Delete request sent, response status:", response.status)
-      
+
       if (!response.ok) {
         console.error("Error deleting notification: Server returned", response.status)
         const errorText = await response.text()
@@ -97,25 +116,25 @@ function NotificationFeed({ userId = "mnb" } : NotificationFeedProps) {
   }
 
   const removeNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((notification) => notification._id !== id));
-  };
+    setNotifications((prev) => prev.filter((notification) => notification.notificationId !== id))
+  }
 
   return (
-    <div style={{ position: 'relative', display: 'inline-block' }}>
+    <div style={{ position: "relative", display: "inline-block" }}>
       {/* Bell Icon with Notification Badge */}
       <motion.div
         style={{
-          position: 'relative',
-          fontSize: '2rem',
-          cursor: 'pointer',
-          color: '#EAB308',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '50px',
-          height: '50px',
-          borderRadius: '50%',
-          background: 'rgba(234, 179, 8, 0.2)',
+          position: "relative",
+          fontSize: "2rem",
+          cursor: "pointer",
+          color: "#EAB308",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "50px",
+          height: "50px",
+          borderRadius: "50%",
+          background: "rgba(234, 179, 8, 0.2)",
         }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -130,20 +149,20 @@ function NotificationFeed({ userId = "mnb" } : NotificationFeedProps) {
             animate={{ scale: 1 }}
             transition={{ duration: 0.3 }}
             style={{
-              position: 'absolute',
-              top: '-5px',
-              right: '-5px',
-              width: '18px',
-              height: '18px',
-              background: '#EAB308',
-              borderRadius: '50%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              fontSize: '12px',
-              fontWeight: 'bold',
-              color: '#18181B',
-              border: '2px solid #18181B',
+              position: "absolute",
+              top: "-5px",
+              right: "-5px",
+              width: "18px",
+              height: "18px",
+              background: "#EAB308",
+              borderRadius: "50%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "12px",
+              fontWeight: "bold",
+              color: "#18181B",
+              border: "2px solid #18181B",
             }}
           >
             {notifications.length}
@@ -159,44 +178,44 @@ function NotificationFeed({ userId = "mnb" } : NotificationFeedProps) {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
           style={{
-            position: 'absolute',
-            top: '60px',
-            left: '0',
-            width: '420px',
-            height: '420px',
-            background: 'linear-gradient(135deg, #18181B, #27272A)',
-            borderRadius: '16px',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
+            position: "absolute",
+            top: "60px",
+            left: "0",
+            width: "420px",
+            height: "420px",
+            background: "linear-gradient(135deg, #18181B, #27272A)",
+            borderRadius: "16px",
+            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+            padding: "20px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
           }}
         >
-          <h2 style={{ color: '#FFF', fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>
-            Notifications
-          </h2>
+          <h2 style={{ color: "#FFF", fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>Notifications</h2>
           {notifications.length === 0 ? (
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flex: 1,
-              textAlign: 'center',
-              color: '#FFF',
-              fontSize: '16px',
-            }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+                textAlign: "center",
+                color: "#FFF",
+                fontSize: "16px",
+              }}
+            >
               <motion.div
                 style={{
-                  width: '60px',
-                  height: '60px',
-                  borderRadius: '50%',
-                  background: 'rgba(234, 179, 8, 0.2)',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginBottom: '10px',
+                  width: "60px",
+                  height: "60px",
+                  borderRadius: "50%",
+                  background: "rgba(234, 179, 8, 0.2)",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: "10px",
                 }}
               >
                 <BellIcon color="#EAB308" size={30} />
@@ -205,44 +224,46 @@ function NotificationFeed({ userId = "mnb" } : NotificationFeedProps) {
               <p>We&apos;ll notify you when something magical happens</p>
             </div>
           ) : (
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '16px',
-              flex: 1,
-              overflowY: 'auto',
-              paddingBottom: '50px',
-              scrollbarWidth: 'none',
-              marginBottom: '31px',
-              msOverflowStyle: 'none',
-            }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "16px",
+                flex: 1,
+                overflowY: "auto",
+                paddingBottom: "50px",
+                scrollbarWidth: "none",
+                marginBottom: "31px",
+                msOverflowStyle: "none",
+              }}
+            >
               {notifications.map((notification, index) => (
                 <motion.div
-                  key={index}
+                  key={notification.notificationId || index}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                   style={{
-                    background: '#323232',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '10px',
+                    background: "#323232",
+                    borderRadius: "12px",
+                    padding: "16px",
+                    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <p style={{ color: '#FFF', fontSize: '14px', flex: 1 }}>{notification.content}</p>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <p style={{ color: "#FFF", fontSize: "14px", flex: 1 }}>{notification.content}</p>
                     <button
                       style={{
-                        background: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontSize: '16px',
-                        color: '#F87171',
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        color: "#F87171",
                       }}
-                      onClick={() => handleDeleteNotification(notification._id)}
+                      onClick={() => handleDeleteNotification(notification.notificationId)}
                     >
                       <XIcon />
                     </button>
@@ -253,17 +274,17 @@ function NotificationFeed({ userId = "mnb" } : NotificationFeedProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
-                        display: 'inline-block',
-                        padding: '10px 18px',
-                        background: '#EAB308',
-                        color: '#000',
-                        borderRadius: '8px',
-                        textDecoration: 'none',
-                        fontSize: '15px',
-                        fontWeight: '600',
-                        textAlign: 'center',
-                        transition: 'background 0.2s',
-                        width: 'fit-content'
+                        display: "inline-block",
+                        padding: "10px 18px",
+                        background: "#EAB308",
+                        color: "#000",
+                        borderRadius: "8px",
+                        textDecoration: "none",
+                        fontSize: "15px",
+                        fontWeight: "600",
+                        textAlign: "center",
+                        transition: "background 0.2s",
+                        width: "fit-content",
                       }}
                     >
                       {notification.buttonText}
@@ -273,26 +294,29 @@ function NotificationFeed({ userId = "mnb" } : NotificationFeedProps) {
               ))}
             </div>
           )}
-          <div style={{
-            textAlign: 'center',
-            color: '#FFF',
-            fontSize: '14px',
-            padding: '10px 0',
-            fontWeight: 'bold',
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-            position: 'absolute',
-            bottom: '10px',
-            width: '100%',
-            left: 0,
-          }}>
-            Powered with ❤️ by <span style={{ textDecoration: 'underline', color: '#EAB308' }}>Sendify</span>
+          <div
+            style={{
+              textAlign: "center",
+              color: "#FFF",
+              fontSize: "14px",
+              padding: "10px 0",
+              fontWeight: "bold",
+              borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+              position: "absolute",
+              bottom: "10px",
+              width: "100%",
+              left: 0,
+            }}
+          >
+            Powered with ❤️ by <span style={{ textDecoration: "underline", color: "#EAB308" }}>Sendify</span>
           </div>
         </motion.div>
       )}
     </div>
-  );
+  )
 }
 
 export { NotificationFeed }
 
 export default NotificationFeed
+
