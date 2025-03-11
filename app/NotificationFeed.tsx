@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { BellIcon, XIcon } from "lucide-react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { io } from "socket.io-client"
 
 // Define the notification type
@@ -16,107 +16,129 @@ type NotificationPayload = {
 
 interface NotificationFeedProps {
   userId: string
+  align?: "start" | "center" | "end"
 }
 
-function NotificationFeed({ userId = "mnb" }: NotificationFeedProps) {
+function NotificationFeed({ userId, align = "center" }: NotificationFeedProps) {
   const [isCardOpen, setIsCardOpen] = useState(false)
   const [notifications, setNotifications] = useState<NotificationPayload[]>([])
+  const [validUserId, setValidUserId] = useState<string | null>(null)
 
+  // Toggle Notification Feed
   const toggleCard = () => {
     setIsCardOpen(!isCardOpen)
   }
 
+  // Track userId and update when available
+  useEffect(() => {
+    if (userId) {
+      setValidUserId(userId)
+    }
+  }, [userId])
+
+  // Fetch notifications when component mounts
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        console.log("Fetching notifications for user ID:", userId)
+        console.log("📥 Fetching notifications for user ID:", userId)
         const response = await fetch("https://sendify.100xbuild.com/api/v1/get-notifications", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ developerUserId: userId }),
         })
+
         const data = await response.json()
-        console.log("Notifications response:", data)
+        console.log("📋 Notifications response:", data)
+
         if (data.success && Array.isArray(data.notifications)) {
-          // Ensure each notification has a notificationId
-          const validNotifications = data.notifications.filter((notification : NotificationPayload) => notification.notificationId)
-          setNotifications(validNotifications)
+          setNotifications(
+            data.notifications.map((notif: any) => ({
+              notificationId: notif._id,
+              content: notif.content,
+              buttonText: notif.buttonText,
+              buttonUrl: notif.buttonUrl,
+              timestamp: new Date(notif._creationTime).toISOString(),
+            })),
+          )
         }
       } catch (error) {
-        console.error("Failed to fetch notifications:", error)
+        console.error("❌ Failed to fetch notifications:", error)
       }
     }
 
     fetchNotifications()
   }, [userId])
 
+  // WebSocket connection for real-time notifications
   useEffect(() => {
+    if (!validUserId) return
+
+    console.warn("⚡ Setting up WebSocket connection for user:", validUserId)
     const socket = io("https://sendify-socket.onrender.com")
 
-    socket.emit("register", userId)
+    socket.emit("register", validUserId)
+    console.log("📡 Socket.IO: Emitted register event with userId:", validUserId)
 
     socket.on("new-notification", (data: NotificationPayload) => {
-      console.log("Received Data:", data)
-      // Ensure the notification has a valid notificationId before adding it
+      console.log("🚀 Received new notification:", data)
+
       if (!data.notificationId) {
-        console.error("Received notification without notificationId:", data)
+        console.error("❌ Missing notificationId in received data:", data)
         return
       }
 
-      const enhancedData = {
+      const newNotification = {
         ...data,
         timestamp: data.timestamp || new Date().toISOString(),
-        notificationId: data.notificationId, // Ensure notificationId is explicitly set
       }
-      setNotifications((prev) => [enhancedData, ...prev])
+
+      setNotifications((prev) => [newNotification, ...prev])
+      console.log("✅ Updated state with new notification!")
     })
 
     return () => {
+      console.log("🛑 Cleaning up WebSocket connection...")
       socket.disconnect()
     }
-  }, [userId])
+  }, [validUserId])
 
+  // Delete notification
   const handleDeleteNotification = async (notificationId: string) => {
-    if (!notificationId) {
-      console.error("Cannot delete notification: Missing notificationId")
-      return
-    }
+    console.log("🗑️ Deleting notification:", notificationId)
 
-    console.log("Deleting notification with ID:", notificationId)
+    // First update the UI for immediate feedback
+    setNotifications((prev) => prev.filter((n) => n.notificationId !== notificationId))
+
+    // Then make the API call
     try {
-      console.log("Preparing to send delete request")
       const response = await fetch("https://sendify.100xbuild.com/api/v1/delete-notifications", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          notificationId,
-          developerUserId: userId,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notificationId, developerUserId: userId }),
       })
 
-      console.log("Delete request sent, response status:", response.status)
-
       if (!response.ok) {
-        console.error("Error deleting notification: Server returned", response.status)
-        const errorText = await response.text()
-        console.error("Error response body:", errorText)
-      } else {
-        const responseData = await response.json()
-        console.log("Delete successful, response data:", responseData)
+        console.error("❌ Error deleting notification:", response.status)
+        return
       }
+
+      console.log("✅ Notification deleted successfully!")
     } catch (error) {
-      console.error("Error deleting notification:", error)
-    } finally {
-      removeNotification(notificationId)
+      console.error("❌ Failed to delete notification:", error)
     }
   }
 
-  const removeNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((notification) => notification.notificationId !== id))
+  // Function to determine the left position based on alignment
+  const getLeftPosition = () => {
+    switch (align) {
+      case "start":
+        return "0px"
+      case "end":
+        return "-370px" // 420px (width) - 50px (bell icon width)
+      case "center":
+      default:
+        return "-185px" // Half of 420px (width) - 25px (half of bell icon width)
+    }
   }
 
   return (
@@ -134,10 +156,24 @@ function NotificationFeed({ userId = "mnb" }: NotificationFeedProps) {
           width: "50px",
           height: "50px",
           borderRadius: "50%",
-          background: "rgba(234, 179, 8, 0.2)",
+          background: "linear-gradient(145deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.25))",
+          boxShadow: "0 4px 15px rgba(234, 179, 8, 0.2)",
+          border: "1px solid rgba(234, 179, 8, 0.3)",
         }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{
+          scale: 1.1,
+          boxShadow: "0 6px 20px rgba(234, 179, 8, 0.3)",
+          background: "linear-gradient(145deg, rgba(234, 179, 8, 0.2), rgba(234, 179, 8, 0.3))",
+        }}
+        whileTap={{
+          scale: 0.95,
+          boxShadow: "0 2px 10px rgba(234, 179, 8, 0.15)",
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 400,
+          damping: 17,
+        }}
         onClick={toggleCard}
       >
         <BellIcon />
@@ -147,14 +183,19 @@ function NotificationFeed({ userId = "mnb" }: NotificationFeedProps) {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ duration: 0.3 }}
+            transition={{
+              type: "spring",
+              stiffness: 500,
+              damping: 15,
+              delay: 0.1,
+            }}
             style={{
               position: "absolute",
               top: "-5px",
               right: "-5px",
-              width: "18px",
-              height: "18px",
-              background: "#EAB308",
+              width: "20px",
+              height: "20px",
+              background: "linear-gradient(135deg, #EAB308, #F59E0B)",
               borderRadius: "50%",
               display: "flex",
               justifyContent: "center",
@@ -163,6 +204,7 @@ function NotificationFeed({ userId = "mnb" }: NotificationFeedProps) {
               fontWeight: "bold",
               color: "#18181B",
               border: "2px solid #18181B",
+              boxShadow: "0 2px 5px rgba(0, 0, 0, 0.3)",
             }}
           >
             {notifications.length}
@@ -173,26 +215,48 @@ function NotificationFeed({ userId = "mnb" }: NotificationFeedProps) {
       {/* Notification Feed Card */}
       {isCardOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
+          initial={{ opacity: 0, y: -20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -20, scale: 0.95 }}
+          transition={{
+            duration: 0.4,
+            type: "spring",
+            stiffness: 300,
+            damping: 25,
+          }}
           style={{
             position: "absolute",
             top: "60px",
-            left: "0",
+            left: getLeftPosition(),
             width: "420px",
             height: "420px",
-            background: "linear-gradient(135deg, #18181B, #27272A)",
-            borderRadius: "16px",
-            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+            background: "linear-gradient(135deg, #1A1A1F, #2A2A35)",
+            borderRadius: "20px",
+            boxShadow:
+              "0 15px 40px rgba(0, 0, 0, 0.4), 0 5px 15px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1)",
             padding: "20px",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            backdropFilter: "blur(10px)",
           }}
         >
-          <h2 style={{ color: "#FFF", fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>Notifications</h2>
+          <h2
+            style={{
+              color: "#FFF",
+              fontSize: "24px",
+              fontWeight: "bold",
+              marginBottom: "20px",
+              background: "linear-gradient(90deg, #FFF, #AAA)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              textAlign: "center",
+              textShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+            }}
+          >
+            Notifications
+          </h2>
           {notifications.length === 0 ? (
             <div
               style={{
@@ -208,107 +272,213 @@ function NotificationFeed({ userId = "mnb" }: NotificationFeedProps) {
             >
               <motion.div
                 style={{
-                  width: "60px",
-                  height: "60px",
+                  width: "70px",
+                  height: "70px",
                   borderRadius: "50%",
-                  background: "rgba(234, 179, 8, 0.2)",
+                  background: "linear-gradient(145deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.25))",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  marginBottom: "10px",
+                  marginBottom: "15px",
+                  boxShadow: "0 8px 20px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1)",
+                  border: "1px solid rgba(234, 179, 8, 0.3)",
+                }}
+                animate={{
+                  y: [0, -5, 0],
+                  boxShadow: [
+                    "0 8px 20px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1)",
+                    "0 15px 30px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1)",
+                    "0 8px 20px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1)",
+                  ],
+                }}
+                transition={{
+                  repeat: Number.POSITIVE_INFINITY,
+                  duration: 3,
+                  ease: "easeInOut",
                 }}
               >
-                <BellIcon color="#EAB308" size={30} />
+                <BellIcon color="#EAB308" size={35} />
               </motion.div>
-              <p>No notifications yet</p>
-              <p>We&apos;ll notify you when something magical happens</p>
+              <p
+                style={{
+                  fontWeight: "500",
+                  marginBottom: "8px",
+                  background: "linear-gradient(90deg, #FFF, #AAA)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                No notifications yet
+              </p>
+              <p
+                style={{
+                  color: "rgba(255, 255, 255, 0.6)",
+                  fontSize: "14px",
+                }}
+              >
+                We'll notify you when something magical happens
+              </p>
             </div>
           ) : (
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "16px",
+                gap: "12px",
                 flex: 1,
                 overflowY: "auto",
                 paddingBottom: "50px",
                 scrollbarWidth: "none",
                 marginBottom: "31px",
                 msOverflowStyle: "none",
+                padding: "5px",
               }}
             >
-              {notifications.map((notification, index) => (
-                <motion.div
-                  key={notification.notificationId || index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  style={{
-                    background: "#323232",
-                    borderRadius: "12px",
-                    padding: "16px",
-                    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px",
-                  }}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <p style={{ color: "#FFF", fontSize: "14px", flex: 1 }}>{notification.content}</p>
-                    <button
-                      style={{
-                        background: "transparent",
-                        border: "none",
-                        cursor: "pointer",
-                        fontSize: "16px",
-                        color: "#F87171",
-                      }}
-                      onClick={() => handleDeleteNotification(notification.notificationId)}
-                    >
-                      <XIcon />
-                    </button>
-                  </div>
-                  {notification.buttonText && notification.buttonUrl && (
-                    <a
-                      href={notification.buttonUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: "inline-block",
-                        padding: "10px 18px",
-                        background: "#EAB308",
-                        color: "#000",
-                        borderRadius: "8px",
-                        textDecoration: "none",
-                        fontSize: "15px",
-                        fontWeight: "600",
-                        textAlign: "center",
-                        transition: "background 0.2s",
-                        width: "fit-content",
-                      }}
-                    >
-                      {notification.buttonText}
-                    </a>
-                  )}
-                </motion.div>
-              ))}
+              <AnimatePresence mode="sync">
+                {notifications.map((notification, index) => (
+                  <motion.div
+                    key={notification.notificationId}
+                    layout
+                    layoutId={notification.notificationId}
+                    initial={{ opacity: 0, y: 15, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{
+                      x: -100,
+                      opacity: 0,
+                      transition: {
+                        duration: 0.3,
+                        ease: "easeInOut",
+                      },
+                    }}
+                    transition={{
+                      layout: {
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 25,
+                        delay: 0.2, // Delay the layout transition
+                      },
+                      duration: 0.4,
+                      delay: index * 0.1,
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 25,
+                    }}
+                    whileHover={{
+                      scale: 1.02,
+                      boxShadow: "0 8px 25px rgba(0, 0, 0, 0.3)",
+                    }}
+                    style={{
+                      background: "linear-gradient(145deg, #2A2A35, #323240)",
+                      borderRadius: "14px",
+                      padding: "14px",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.05)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "8px",
+                      border: "1px solid rgba(255, 255, 255, 0.05)",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <p
+                        style={{
+                          color: "rgba(255, 255, 255, 0.9)",
+                          fontSize: "13px",
+                          flex: 1,
+                          lineHeight: "1.4",
+                          fontWeight: "400",
+                          textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
+                          margin: "0",
+                        }}
+                      >
+                        {notification.content}
+                      </p>
+                      <motion.button
+                        style={{
+                          background: "transparent",
+                          border: "none",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                          color: "#F87171",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: "30px",
+                          height: "30px",
+                          borderRadius: "50%",
+                        }}
+                        whileHover={{
+                          background: "rgba(248, 113, 113, 0.15)",
+                          scale: 1.1,
+                        }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{ duration: 0.2 }}
+                        onClick={() => handleDeleteNotification(notification.notificationId)}
+                      >
+                        <XIcon size={18} />
+                      </motion.button>
+                    </div>
+                    {notification.buttonText && notification.buttonUrl && (
+                      <motion.a
+                        href={notification.buttonUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: "inline-block",
+                          padding: "8px 14px",
+                          background: "linear-gradient(135deg, #EAB308, #F59E0B)",
+                          color: "#000",
+                          borderRadius: "8px",
+                          textDecoration: "none",
+                          fontSize: "13px",
+                          fontWeight: "600",
+                          textAlign: "center",
+                          width: "fit-content",
+                          boxShadow: "0 3px 8px rgba(234, 179, 8, 0.3)",
+                          border: "1px solid rgba(234, 179, 8, 0.6)",
+                        }}
+                        whileHover={{
+                          scale: 1.03,
+                          boxShadow: "0 6px 15px rgba(234, 179, 8, 0.4)",
+                        }}
+                        whileTap={{ scale: 0.97 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {notification.buttonText}
+                      </motion.a>
+                    )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           )}
           <div
             style={{
               textAlign: "center",
-              color: "#FFF",
+              color: "rgba(255, 255, 255, 0.7)",
               fontSize: "14px",
               padding: "10px 0",
               fontWeight: "bold",
-              borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+              borderTop: "1px solid rgba(255, 255, 255, 0.08)",
               position: "absolute",
               bottom: "10px",
-              width: "100%",
-              left: 0,
+              width: "calc(100% - 40px)",
+              left: "20px",
             }}
           >
-            Powered with ❤️ by <span style={{ textDecoration: "underline", color: "#EAB308" }}>Sendify</span>
+            Powered with{" "}
+            <span
+              style={{
+                background: "linear-gradient(90deg, #EAB308, #F59E0B)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                textDecoration: "underline",
+                textUnderlineOffset: "2px",
+                textDecorationColor: "rgba(234, 179, 8, 0.4)",
+                cursor: "pointer",
+              }}
+            >
+              Sendify
+            </span>
           </div>
         </motion.div>
       )}
@@ -317,6 +487,5 @@ function NotificationFeed({ userId = "mnb" }: NotificationFeedProps) {
 }
 
 export { NotificationFeed }
-
 export default NotificationFeed
 
