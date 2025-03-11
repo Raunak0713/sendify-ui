@@ -41,7 +41,7 @@ function NotificationFeed({ userId = "mnb" }: NotificationFeedProps) {
         console.log("Notifications response:", data)
         if (data.success && Array.isArray(data.notifications)) {
           // Ensure each notification has a notificationId
-          const validNotifications = data.notifications.filter((notification: any) => notification.notificationId)
+          const validNotifications = data.notifications.filter((notification : NotificationPayload) => notification.notificationId)
           setNotifications(validNotifications)
         }
       } catch (error) {
