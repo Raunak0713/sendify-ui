@@ -43,6 +43,8 @@ export const createNotifications = mutation({
         memberId,
       });
     }
+
+    return notificationId
   },
 });
 

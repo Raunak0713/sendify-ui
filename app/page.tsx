@@ -1,13 +1,22 @@
 "use client"
 
-import HeroSection from "../components/HeroSection";
-import Navbar from "../components/Navbar";
+import { sendify } from "../lib/sendify";
+import { NotificationFeed } from "./NotificationFeed";
+
+
+// import HeroSection from "../components/HeroSection";
+// import Navbar from "../components/Navbar";
 
 const page = () => {
+  const send = async () => {
+    await sendify.sendNotification(["bao"],"mv","vd","hg")
+  }
   return (
-    <div className="h-screen md:overflow-hidden">
-      <Navbar />
-      <HeroSection />
+    <div className="">
+      {/* <Navbar />
+      <HeroSection /> */}
+      <NotificationFeed userId="bao"/>
+      <button onClick={send}>Send Notification</button>
     </div>
   );
 };

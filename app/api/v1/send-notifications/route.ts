@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   try {
     const { userIds, content, buttonText, buttonUrl, projectId } = await req.json();
 
-    await fetchMutation(api.notification.createNotifications, {
+    const notificationId = await fetchMutation(api.notification.createNotifications, {
       members: userIds,
       content,
       buttonText,
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userIds, content, buttonText, buttonUrl }),
+      body: JSON.stringify({ notificationId, userIds, content, buttonText, buttonUrl }),
     });
 
     if (!response.ok) {

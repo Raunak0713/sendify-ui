@@ -58,7 +58,7 @@ const ProjectPage = () => {
 
   const handleCopyProjectId = () => {
     navigator.clipboard.writeText(projectData.project._id);
-    toast.success("PROJECT ID copied to clipboard");
+    toast.success("PROJECT ID copied to clipboard")
   }
 
   const handleSendNotification = async (memberId) => {
