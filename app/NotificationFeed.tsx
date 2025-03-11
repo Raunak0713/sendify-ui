@@ -316,7 +316,7 @@ function NotificationFeed({ userId, align = "center" }: NotificationFeedProps) {
                   fontSize: "14px",
                 }}
               >
-                We'll notify you when something magical happens
+                We&apos;ll notify you when something magical happens
               </p>
             </div>
           ) : (
