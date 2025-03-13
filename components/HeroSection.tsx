@@ -1,64 +1,99 @@
-"use client";
+import Link from "next/link";
+import React from "react";
 
-import React, { useState } from "react";
-import { Check, Copy } from "lucide-react";
+const HeroSection: React.FC = () => {
 
-const HeroSection = () => {
-  const [copied, setCopied] = useState(false);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText("npm i sendify");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const features = [
+    { title: "Instant Delivery", description: "Send notifications instantly with real-time delivery.", icon: "⚡" },
+    { title: "Customizable UI", description: "Fully customize notifications to match your brand.", icon: "🎨" },
+    { title: "Multi-platform", description: "Works seamlessly across web, mobile, and desktop.", icon: "📱" },
+    { title: "User Targeting", description: "Send notifications to specific users or segments.", icon: "🎯" },
+    { title: "Analytics", description: "Track delivery, open rates, and engagement.", icon: "📊" },
+    { title: "Real-time WebSockets", description: "Powered by WebSockets for instant updates without delays.", icon: "🔄" },
+  ];
+  
 
   return (
-    <div className="text-white/85 flex flex-col items-center justify-center min-h-screen px-6 md:px-32 ">
-      <span className="border border-white/20 rounded-lg bg-blue-100/10 shadow-lg p-1 text-xs md:text-base mt-10 ">
-        The Simplest Plug & Play Real-Time Notifications
-      </span>
-      <div className="mt-10 text-center text-3xl md:text-5xl mb-10">
-        Your One Stop Solution for ReactJS and NextJS Real-Time Notifications
+    <section className="relative min-h-screen pt-32 pb-20 flex flex-col items-center justify-center px-6 bg-zinc-900">
+      {/* Background gradient blobs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-orange-500/20 rounded-full filter blur-3xl opacity-60 animate-pulse-slow" />
+        <div className="absolute top-1/3 right-20 w-64 h-64 bg-amber-400/20 rounded-full filter blur-3xl opacity-60 animate-pulse-slow animation-delay-500" />
+        <div className="absolute bottom-32 -left-12 w-72 h-72 bg-orange-300/20 rounded-full filter blur-3xl opacity-60 animate-pulse-slow animation-delay-1000" />
       </div>
-      <div className="relative group">
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-zinc-500 to-zinc-900 rounded-xl blur opacity-30 group-hover:opacity-70 transition duration-300"></div>
-        <div className="relative flex items-center gap-2 bg-zinc-900/90 border border-white/10 rounded-xl shadow-2xl px-4 py-3">
-          <div className="flex items-center space-x-2">
-            <span className="text-purple-400">$</span>
-            <code className="font-mono text-sm md:text-base text-white">npm i sendify</code>
-          </div>
-          <button
-            onClick={copyToClipboard}
-            className="ml-4 p-1.5 rounded-md transition-all duration-200 hover:bg-white/10 text-white/70 hover:text-white"
-            aria-label="Copy to clipboard"
-          >
-            {copied ? <Check size={16} className="text-green-400" /> : <Copy size={16} />}
-          </button>
+
+      <div className="max-w-5xl mx-auto text-center relative z-10">
+        <div className="inline-block mb-4 px-4 py-1.5 rounded-full bg-orange-100/10 dark:bg-orange-900/40 text-orange-500 text-sm font-medium animate-fade-in">
+          Real-time notifications for ReactJS and NextJS
+        </div>
+        
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight text-white mt-10">
+          Elevate User Experience with{" "}
+          <span className="bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 bg-clip-text text-transparent">
+            Sendify
+          </span>
+        </h1>
+
+        <p className="text-xl text-orange-100/70 mb-10 max-w-4xl mx-auto leading-relaxed animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          A lightweight, customizable notification library that seamlessly integrates with ReactJS and NextJS applications.
+        </p>
+
+
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <Link href={"/dashboard"}>
+            <button className="px-4 py-2 md:px-6 md:py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-400 text-black font-medium transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98]">
+              Get Started
+            </button>
+          </Link>
+          <Link href={"https://docs.sendify.100xbuild.com"}>
+            <button className="px-4 py-2 md:px-6 md:py-3 rounded-full bg-zinc-800 text-orange-100 font-medium transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/10 hover:scale-[1.02] active:scale-[0.98]">
+              Documentation
+            </button>
+          </Link>
         </div>
       </div>
-      
+
       {/* Features Section */}
-      <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 md:gap-6 text-center w-full max-w-4xl md:max-w-5xl p-8 md:px-4">
-        <div className="p-4 bg-zinc-900/80 border border-white/10 rounded-lg shadow-lg">
-          <h3 className="text-lg font-semibold text-white">⚡ Instant Notifications</h3>
-          <p className="text-white/70 mt-2 text-sm">Deliver real-time updates with zero delay across your application.</p>
+      <div className="w-full mt-20 overflow-hidden">
+        <h2 className="text-center text-3xl font-bold mb-8 text-white">Features</h2>
+
+        {/* Desktop view (Static Grid) */}
+        <div className="hidden md:grid md:grid-cols-3 gap-6 max-w-6xl mx-auto px-6">
+          {features.map((feature, index) => (
+            <div key={`desktop-${index}`} className="rounded-2xl bg-zinc-800/80 dark:bg-zinc-800/60 border border-orange-500/20 p-6 transition-all duration-300 hover:shadow-elevation hover:translate-y-[-2px] hover:shadow-orange-500/10 relative overflow-hidden">
+              <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-orange-100/10 dark:bg-orange-900/30 text-orange-500 dark:text-orange-400">
+                {feature.icon}
+              </div>
+              <h3 className="text-xl font-medium mb-2 text-white">{feature.title}</h3>
+              <p className="text-orange-100/70">{feature.description}</p>
+
+              {/* Subtle background effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent dark:from-orange-900/5 rounded-2xl pointer-events-none"></div>
+            </div>
+          ))}
         </div>
-        <div className="p-4 bg-zinc-900/80 border border-white/10 rounded-lg shadow-lg">
-          <h3 className="text-lg font-semibold text-white">🔧 Easy Integration</h3>
-          <p className="text-white/70 mt-2 text-sm">Plug & play with minimal configuration, works seamlessly with React & Next.js.</p>
+
+        {/* Mobile view (Scrolling one by one) */}
+        <div className="md:hidden w-full overflow-x-auto">
+          <div className="flex gap-4 px-4 py-2 w-max scroll-smooth snap-x snap-mandatory">
+            {features.map((feature, index) => (
+              <div
+                key={`mobile-${index}`}
+                className="feature-card flex-shrink-0 w-80 rounded-2xl bg-zinc-800/80 dark:bg-zinc-800/60 border border-orange-500/20 p-6 relative overflow-hidden snap-center"
+              >
+                <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-orange-100/10 dark:bg-orange-900/30 text-orange-500 dark:text-orange-400">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-medium mb-2 text-white">{feature.title}</h3>
+                <p className="text-orange-100/70">{feature.description}</p>
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent dark:from-orange-900/5 rounded-2xl pointer-events-none"></div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="p-4 bg-zinc-900/80 border border-white/10 rounded-lg shadow-lg">
-          <h3 className="text-lg font-semibold text-white">📡 Scalable & Reliable</h3>
-          <p className="text-white/70 mt-2 text-sm">Built for modern web apps, ensuring stability and performance at scale.</p>
-        </div>
-      
       </div>
-      
-      {/* Footer */}
-      <footer className="mt-16   py-6 text-center text-white/60 text-sm border-t border-white/10 w-full">
-        Made with ❤️ by Sendify | © {new Date().getFullYear()} All rights reserved.
-      </footer>
-    </div>
+    
+    </section>
   );
 };
 

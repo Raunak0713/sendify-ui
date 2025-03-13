@@ -1,18 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { GeistMono } from "geist/font/mono"
 import "./globals.css";
 import { ConvexClerkProvider } from "../providers/ConvexClerkProvider";
 import { Toaster } from "../components/ui/sonner"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -27,7 +18,7 @@ export default function RootLayout({
   return (
     <ConvexClerkProvider>
       <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen bg-gradient-to-br from-zinc-900 to-black`}>
+        <body className={`${GeistMono.className} antialiased h-screen bg-gradient-to-br from-zinc-900 to-black`}>
           {children}
           <Toaster />
         </body>

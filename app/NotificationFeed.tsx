@@ -368,33 +368,56 @@
 //                       boxShadow: "0 8px 25px rgba(0, 0, 0, 0.3)",
 //                     }}
 //                     style={{
-//                       background: "linear-gradient(145deg, #2A2A35, #323240)",
+//                       background: `linear-gradient(145deg, rgba(42, 42, 53, 0.8), rgba(50, 50, 64, 0.9))`,
+//                       backdropFilter: "blur(8px)",
 //                       borderRadius: "14px",
-//                       padding: "14px",
-//                       boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.05)",
+//                       padding: "16px",
+//                       boxShadow: "0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.07)",
 //                       display: "flex",
 //                       flexDirection: "column",
-//                       gap: "8px",
-//                       border: "1px solid rgba(255, 255, 255, 0.05)",
+//                       gap: "10px",
+//                       border: `1px solid rgba(234, 179, 8, 0.15)`,
+//                       position: "relative",
+//                       overflow: "hidden",
 //                     }}
 //                   >
-//                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+//                     {/* Decorative accent */}
+//                     <div
+//                       style={{
+//                         position: "absolute",
+//                         top: 0,
+//                         left: 0,
+//                         width: "4px",
+//                         height: "100%",
+//                         background: "linear-gradient(to bottom, #EAB308, rgba(234, 179, 8, 0.4))",
+//                         borderTopLeftRadius: "14px",
+//                         borderBottomLeftRadius: "14px",
+//                       }}
+//                     />
+                    
+//                     <div style={{ 
+//                       display: "flex", 
+//                       justifyContent: "space-between", 
+//                       alignItems: "flex-start",
+//                       paddingLeft: "8px" 
+//                     }}>
 //                       <p
 //                         style={{
-//                           color: "rgba(255, 255, 255, 0.9)",
-//                           fontSize: "13px",
+//                           color: "rgba(255, 255, 255, 0.95)",
+//                           fontSize: "14px",
 //                           flex: 1,
-//                           lineHeight: "1.4",
+//                           lineHeight: "1.5",
 //                           fontWeight: "400",
 //                           textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
 //                           margin: "0",
+//                           letterSpacing: "0.2px",
 //                         }}
 //                       >
 //                         {notification.content}
 //                       </p>
 //                       <motion.button
 //                         style={{
-//                           background: "transparent",
+//                           background: "rgba(248, 113, 113, 0.1)",
 //                           border: "none",
 //                           cursor: "pointer",
 //                           fontSize: "16px",
@@ -405,16 +428,18 @@
 //                           width: "30px",
 //                           height: "30px",
 //                           borderRadius: "50%",
+//                           marginLeft: "8px",
+//                           flexShrink: 0,
 //                         }}
 //                         whileHover={{
-//                           background: "rgba(248, 113, 113, 0.15)",
+//                           background: "rgba(248, 113, 113, 0.2)",
 //                           scale: 1.1,
 //                         }}
 //                         whileTap={{ scale: 0.9 }}
 //                         transition={{ duration: 0.2 }}
 //                         onClick={() => handleDeleteNotification(notification.notificationId)}
 //                       >
-//                         <XIcon size={18} />
+//                         <XIcon size={16} />
 //                       </motion.button>
 //                     </div>
 //                     {notification.buttonText && notification.buttonUrl && (
@@ -424,7 +449,7 @@
 //                         rel="noopener noreferrer"
 //                         style={{
 //                           display: "inline-block",
-//                           padding: "8px 14px",
+//                           padding: "8px 16px",
 //                           background: "linear-gradient(135deg, #EAB308, #F59E0B)",
 //                           color: "#000",
 //                           borderRadius: "8px",
@@ -433,8 +458,9 @@
 //                           fontWeight: "600",
 //                           textAlign: "center",
 //                           width: "fit-content",
-//                           boxShadow: "0 3px 8px rgba(234, 179, 8, 0.3)",
+//                           boxShadow: "0 3px 10px rgba(234, 179, 8, 0.3)",
 //                           border: "1px solid rgba(234, 179, 8, 0.6)",
+//                           marginLeft: "8px",
 //                         }}
 //                         whileHover={{
 //                           scale: 1.03,
@@ -445,6 +471,22 @@
 //                       >
 //                         {notification.buttonText}
 //                       </motion.a>
+//                     )}
+                    
+//                     {/* Subtle timestamp */}
+//                     {notification.timestamp && (
+//                       <div
+//                         style={{
+//                           fontSize: "11px",
+//                           color: "rgba(255, 255, 255, 0.4)",
+//                           textAlign: "right",
+//                           marginTop: "2px",
+//                           fontStyle: "italic",
+//                           paddingRight: "2px",
+//                         }}
+//                       >
+//                         {new Date(notification.timestamp).toLocaleString().split(",")[0]}
+//                       </div>
 //                     )}
 //                   </motion.div>
 //                 ))}
@@ -488,4 +530,3 @@
 
 // export { NotificationFeed }
 // export default NotificationFeed
-
