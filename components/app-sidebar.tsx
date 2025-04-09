@@ -34,63 +34,7 @@ const data = {
         },
       ],
     },
-    {
-      title: "Documentation",
-      url: "/dashboard/documentation",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Billing",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "Bronze 🥉",
-          url: "/dashboard/billing",
-        },
-        {
-          title: "Silver 🥈",
-          url: "/dashboard/billing",
-        },
-        {
-          title: "Gold 🥇",
-          url: "/dashboard/billing",
-        },
-        {
-          title: "Diamond 💎",
-          url: "/dashboard/billing",
-        },
-      ],
-    },
-    {
-      title: "Playground",
-      url: "/dashboard/playground",
-      icon: Settings2,
-      items: [
-        {
-          title: "Test Components",
-          url: "/dashboard/playground",
-        },
-      ],
-    },
+    
   ],
 };
 

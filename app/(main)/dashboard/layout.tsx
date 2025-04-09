@@ -28,7 +28,7 @@ const DashboardLayout = ({ children } : DashboardLayoutProps) => {
     <SidebarProvider className="dark">
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+        <header className="flex h-16 bg-black shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator
@@ -38,7 +38,7 @@ const DashboardLayout = ({ children } : DashboardLayoutProps) => {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
+                  <BreadcrumbLink href="#" className='text-white'>
                     {getPageTitle()}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
@@ -46,7 +46,7 @@ const DashboardLayout = ({ children } : DashboardLayoutProps) => {
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex text-white flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="flex bg-black text-white flex-1 flex-col gap-4 p-4 pt-0">
           { children }
         </div>
       </SidebarInset>

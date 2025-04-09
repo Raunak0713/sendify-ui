@@ -23,7 +23,7 @@ const HeroSection: React.FC = () => {
       </div>
 
       <div className="max-w-5xl mx-auto text-center relative z-10">
-        <div className="inline-block mb-4 px-4 py-1.5 rounded-full bg-orange-100/10 dark:bg-orange-900/40 text-orange-500 text-sm font-medium animate-fade-in">
+        <div className="inline-block mb-4 px-4 py-1.5  rounded-full bg-orange-100/10 dark:bg-orange-900/40 text-orange-500 text-xs md:text-sm font-medium animate-fade-in">
           Real-time notifications for ReactJS and NextJS
         </div>
         

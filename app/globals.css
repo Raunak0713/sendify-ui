@@ -87,4 +87,28 @@
   }
 }
 
+@keyframes marquee-left {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-50%); /* Instead of -100% */
+  }
+}
 
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%); /* Instead of -100% */
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+
+.animate-marquee-left {
+  animation: marquee-left 20s linear infinite;
+}
+
+.animate-marquee-right {
+  animation: marquee-right 20s linear infinite;
+}
