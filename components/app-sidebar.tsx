@@ -1,8 +1,6 @@
 "use client"
 import { UserButton } from "@clerk/nextjs"
 import {
-  BookOpen,
-  Settings2,
   SquareTerminal
 } from "lucide-react"
 import Link from "next/link"
