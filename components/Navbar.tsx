@@ -22,7 +22,7 @@ const NavBar: React.FC = () => {
       className={cn(
         "fixed top-4 left-4 right-4 z-50 transition-all duration-300 px-6 md:px-10",
         isScrolled
-          ? "max-w-md sm:max-w-lg md:max-w-7xl mx-auto rounded-2xl py-3 shadow-lg backdrop-blur-lg bg-zinc-900/60 border border-zinc-700/50"
+          ? "max-w-md sm:max-w-lg md:max-w-7xl mx-auto rounded-2xl py-3 shadow-lg backdrop-blur-sm bg-zinc-900/60 border border-zinc-700/50"
           : "w-full py-4 border-b border-transparent"
       )}
     >

@@ -24,7 +24,7 @@ const HeroSection: React.FC = () => {
 
       <div className="max-w-5xl mx-auto text-center relative z-10">
         <div className="inline-block mb-4 px-4 py-1.5  rounded-full bg-orange-100/10 dark:bg-orange-900/40 text-orange-500 text-xs md:text-sm font-medium animate-fade-in">
-          Real-time notifications for ReactJS and NextJS
+          Real-time notifications for NextJS and ReactJS
         </div>
         
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight text-white mt-10">
@@ -40,7 +40,7 @@ const HeroSection: React.FC = () => {
 
 
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <Link href={"/dashboard"}>
+          <Link href={"/dashboard/projects"}>
             <button className="px-4 py-2 md:px-6 md:py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-400 text-black font-medium transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98]">
               Get Started
             </button>
