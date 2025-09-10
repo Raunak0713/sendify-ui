@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
     { title: "Privacy Policy", href: "/privacy" },
     { title: "Terms & Conditions", href: "/terms" },
     { title: "Refund Policy", href: "/refund" },
-    { title: "Shipping Policy", href: "/shipping" },
+    { title: "Shipping Policy", href: "/shipping-policy" },
     { title: "Contact Us", href: "/contact" },
   ];
 
