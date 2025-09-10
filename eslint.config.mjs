@@ -24,7 +24,9 @@ const eslintConfig = [
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/no-inferrable-types": "off",
       // Disable general unused vars rule as well
-      "no-unused-vars": "off"
+      "no-unused-vars": "off",
+      // Disable React rules for unescaped entities
+      "react/no-unescaped-entities": "off"
     }
   }
 ];
